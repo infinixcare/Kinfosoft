@@ -41,12 +41,12 @@
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
   body{
-    background:var(--bg);
+    background:transparent;
     color:var(--ink);
     font-family:'Inter', sans-serif;
     -webkit-font-smoothing:antialiased;
     overflow-x:hidden;
-    transition:background 0.4s ease, color 0.4s ease;
+    transition:color 0.4s ease;
   }
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
@@ -275,9 +275,38 @@
   }
   .to-top.show{opacity:1; pointer-events:auto; transform:translateY(0);}
   .to-top:hover{transform:translateY(-3px);}
+
+  .bg-fixed-layer { position: fixed; inset: 0; z-index: -1; overflow: hidden; }
+  .bg-fixed-image {
+    position: absolute; inset: -5%;
+    background-image: url('./assets/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    will-change: transform, filter;
+    animation: slowZoom 24s ease-in-out infinite alternate;
+  }
+  @keyframes slowZoom {
+    0%   { transform: scale(1) translateY(0); filter: brightness(0.85) saturate(1); }
+    100% { transform: scale(1.08) translateY(-1%); filter: brightness(1.05) saturate(1.15); }
+  }
+  .bg-fixed-overlay {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(5,7,10,0.5) 0%, rgba(5,7,10,0.8) 55%, rgba(5,7,10,0.95) 100%),
+      linear-gradient(180deg, rgba(5,7,10,0.65) 0%, rgba(5,7,10,0.9) 100%);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bg-fixed-image { animation: none; }
+  }
 </style>
 </head>
 <body>
+
+<!-- [UI] Add fixed parallax background image with scroll zoom + readability overlay - Aug 2026 -->
+<div class="bg-fixed-layer">
+  <div class="bg-fixed-image" id="bgImage"></div>
+  <div class="bg-fixed-overlay"></div>
+</div>
 
 <header class="site">
   <div class="nav">
