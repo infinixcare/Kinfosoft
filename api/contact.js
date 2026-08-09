@@ -32,7 +32,8 @@ module.exports = async function handler(req, res) {
 
   try {
     await resend.emails.send({
-      from: 'Kinfosoft <onboarding@resend.dev>',
+      // [BACKEND] Switch sender to verified kinfosoft.com domain - Aug 2026
+      from: 'Kinfosoft <noreply@kinfosoft.com>',
       to: 'hello@kinfosoft.com',
       reply_to: email.trim(),
       subject: `New project inquiry — ${name.trim()}`,
