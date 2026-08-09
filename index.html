@@ -5,28 +5,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kinfosoft — Software, Built and Kept Running</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
-    --porcelain: #F2EFE6;
-    --porcelain-dim: #E9E4D6;
-    --ink: #1E211D;
-    --ink-soft: #4A4F47;
-    --brass: #B8860B;
-    --brass-bright: #D9A62A;
-    --enamel: #2B4B41;
-    --enamel-light: #3E6B5C;
-    --line: rgba(30,33,29,0.14);
-    --paper: #FBF9F3;
+    --radius: 14px;
+  }
+  html[data-theme="light"]{
+    --bg: #F5F3EE;
+    --bg-alt: #EBE8E0;
+    --surface: #FFFFFF;
+    --ink: #17181B;
+    --ink-soft: #5B5D63;
+    --line: rgba(23,24,27,0.10);
+    --brass: #A8710F;
+    --brass-bright: #C98A1A;
+    --enamel: #1E5245;
+    --enamel-bright: #2B7A65;
+    --shadow: 0 20px 50px -28px rgba(23,24,27,0.28);
+    --glass: rgba(255,255,255,0.6);
+  }
+  html[data-theme="dark"]{
+    --bg: #0F1210;
+    --bg-alt: #171B18;
+    --surface: #1A1E1B;
+    --ink: #F2F0E9;
+    --ink-soft: #9A9D95;
+    --line: rgba(242,240,233,0.10);
+    --brass: #E3AA3D;
+    --brass-bright: #F4C15A;
+    --enamel: #4FB89A;
+    --enamel-bright: #6ED6B8;
+    --shadow: 0 24px 60px -24px rgba(0,0,0,0.6);
+    --glass: rgba(26,30,27,0.6);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
   body{
-    background:var(--porcelain);
+    background:var(--bg);
     color:var(--ink);
     font-family:'Inter', sans-serif;
     -webkit-font-smoothing:antialiased;
     overflow-x:hidden;
+    transition:background 0.4s ease, color 0.4s ease;
   }
   @media (prefers-reduced-motion: reduce){
     *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
@@ -36,241 +56,225 @@
     font-weight:400;
     letter-spacing:0.01em;
     text-transform:uppercase;
-    line-height:0.95;
+    line-height:0.96;
   }
   .mono{font-family:'IBM Plex Mono', monospace;}
   a{color:inherit; text-decoration:none;}
   img{max-width:100%; display:block;}
   .wrap{max-width:1180px; margin:0 auto; padding:0 32px;}
-  button, input, textarea, select{font-family:inherit;}
-
-  /* focus visibility */
-  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+  button, input, textarea, select{font-family:inherit; color:inherit;}
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
     outline:3px solid var(--brass); outline-offset:3px;
   }
 
-  /* ===== NAV ===== */
+  .reveal{opacity:0; transform:translateY(28px); transition:opacity 0.7s cubic-bezier(.2,.7,.2,1), transform 0.7s cubic-bezier(.2,.7,.2,1);}
+  .reveal.in-view{opacity:1; transform:translateY(0);}
+  .reveal-stagger.in-view > *{opacity:1; transform:translateY(0);}
+  .reveal-stagger > *{opacity:0; transform:translateY(20px); transition:opacity 0.6s ease, transform 0.6s ease;}
+  .reveal-stagger.in-view > *:nth-child(1){transition-delay:0.05s;}
+  .reveal-stagger.in-view > *:nth-child(2){transition-delay:0.14s;}
+  .reveal-stagger.in-view > *:nth-child(3){transition-delay:0.23s;}
+  .reveal-stagger.in-view > *:nth-child(4){transition-delay:0.32s;}
+  .reveal-stagger.in-view > *:nth-child(5){transition-delay:0.41s;}
+  .reveal-stagger.in-view > *:nth-child(6){transition-delay:0.50s;}
+
   header.site{
     position:sticky; top:0; z-index:100;
-    background:rgba(242,239,230,0.92);
-    backdrop-filter: blur(6px);
+    background:var(--glass);
+    backdrop-filter: blur(14px) saturate(1.4);
     border-bottom:1px solid var(--line);
+    transition:background 0.4s ease, border-color 0.4s ease;
   }
   .nav{
     display:flex; align-items:center; justify-content:space-between;
-    padding:18px 32px;
+    padding:16px 32px;
     max-width:1180px; margin:0 auto;
   }
-  .logo{
-    display:flex; align-items:center; gap:10px;
-    font-family:'Anton', sans-serif; font-size:22px; letter-spacing:0.02em;
-  }
-  .logo .dot{
-    width:10px; height:10px; border-radius:50%;
-    background:var(--brass);
-    box-shadow:0 0 0 3px rgba(184,134,11,0.18);
-  }
-  nav.links{display:flex; gap:36px; font-size:14px; font-weight:600; letter-spacing:0.03em; text-transform:uppercase;}
-  nav.links a{position:relative; padding:4px 0; color:var(--ink-soft);}
+  .logo{display:flex; align-items:center; gap:10px; font-family:'Anton', sans-serif; font-size:21px; letter-spacing:0.02em;}
+  .logo .dot{width:9px; height:9px; border-radius:50%; background:var(--brass); box-shadow:0 0 0 4px color-mix(in srgb, var(--brass) 18%, transparent);}
+  nav.links{display:flex; align-items:center; gap:34px; font-size:14px; font-weight:600; letter-spacing:0.02em;}
+  nav.links a{position:relative; padding:4px 0; color:var(--ink-soft); transition:color 0.2s ease;}
   nav.links a:hover{color:var(--ink);}
-  nav.links a::after{
-    content:''; position:absolute; left:0; right:0; bottom:-2px; height:2px;
-    background:var(--brass); transform:scaleX(0); transform-origin:left;
-    transition:transform 0.25s ease;
-  }
+  nav.links a::after{content:''; position:absolute; left:0; right:0; bottom:-2px; height:2px; background:var(--brass); transform:scaleX(0); transform-origin:left; transition:transform 0.25s ease;}
   nav.links a:hover::after{transform:scaleX(1);}
+  .nav-right{display:flex; align-items:center; gap:14px;}
+  .theme-toggle{
+    width:42px; height:42px; border-radius:50%; border:1px solid var(--line);
+    background:var(--surface); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:transform 0.25s ease, border-color 0.25s ease;
+  }
+  .theme-toggle:hover{transform:rotate(20deg) scale(1.06); border-color:var(--brass);}
+  .theme-toggle svg{width:18px; height:18px; stroke:var(--ink); transition:stroke 0.3s ease;}
   .nav-cta{
-    background:var(--ink); color:var(--paper); font-size:13px; font-weight:700;
-    text-transform:uppercase; letter-spacing:0.05em; padding:11px 20px;
-    border-radius:2px; transition:background 0.2s ease;
+    background:var(--ink); color:var(--bg); font-size:13px; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.04em; padding:11px 20px;
+    border-radius:100px; transition:transform 0.2s ease, background 0.3s ease; display:inline-block;
   }
-  .nav-cta:hover{background:var(--enamel);}
-  .nav-mobile-hide{display:flex;}
-  @media (max-width:760px){
-    nav.links{display:none;}
-  }
+  .nav-cta:hover{transform:translateY(-2px); background:var(--enamel); color:#fff;}
+  @media (max-width:780px){ nav.links{display:none;} }
 
-  /* ===== HERO ===== */
-  .hero{
-    padding:96px 0 40px;
-    position:relative;
+  .hero{padding:100px 0 50px; position:relative;}
+  .hero-bg-glow{
+    position:absolute; top:-140px; right:-100px; width:600px; height:600px; border-radius:50%;
+    background:radial-gradient(circle, color-mix(in srgb, var(--brass) 22%, transparent) 0%, transparent 70%);
+    filter:blur(20px); pointer-events:none; z-index:0;
+    animation:float 9s ease-in-out infinite;
   }
-  .hero .wrap{display:grid; grid-template-columns:1.15fr 0.85fr; gap:56px; align-items:end;}
+  @keyframes float{0%,100%{transform:translateY(0px);} 50%{transform:translateY(30px);}}
+  .hero .wrap{display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; align-items:end; position:relative; z-index:1;}
   @media (max-width:900px){.hero .wrap{grid-template-columns:1fr;}}
   .eyebrow{
-    display:inline-flex; align-items:center; gap:8px;
-    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.08em;
-    text-transform:uppercase; color:var(--enamel); font-weight:600;
-    background:rgba(43,75,65,0.08);
-    padding:6px 12px; border-radius:2px; margin-bottom:22px;
+    display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:12px;
+    letter-spacing:0.08em; text-transform:uppercase; color:var(--enamel); font-weight:600;
+    background:color-mix(in srgb, var(--enamel) 12%, transparent); padding:7px 13px; border-radius:100px; margin-bottom:24px;
   }
-  .eyebrow .ping{width:6px; height:6px; border-radius:50%; background:var(--enamel-light); animation:ping 1.8s ease-in-out infinite;}
+  .eyebrow .ping{width:6px; height:6px; border-radius:50%; background:var(--enamel-bright); animation:ping 1.8s ease-in-out infinite;}
   @keyframes ping{0%,100%{opacity:1;} 50%{opacity:0.25;}}
-  h1.hero-title{
-    font-size:clamp(44px, 6.4vw, 84px);
-    margin-bottom:26px;
+  h1.hero-title{font-size:clamp(42px, 6.2vw, 80px); margin-bottom:26px;}
+  h1.hero-title .accent{
+    background:linear-gradient(100deg, var(--brass), var(--brass-bright));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
   }
-  h1.hero-title .accent{color:var(--brass);}
-  .hero-sub{
-    font-size:18px; color:var(--ink-soft); max-width:46ch; line-height:1.55;
-    margin-bottom:34px;
-  }
+  .hero-sub{font-size:18px; color:var(--ink-soft); max-width:46ch; line-height:1.6; margin-bottom:34px;}
   .hero-actions{display:flex; gap:16px; flex-wrap:wrap;}
   .btn-primary, .btn-ghost{
-    display:inline-flex; align-items:center; gap:8px;
-    padding:15px 26px; font-size:14px; font-weight:700; text-transform:uppercase;
-    letter-spacing:0.04em; border-radius:2px; transition:all 0.2s ease; border:2px solid transparent;
+    display:inline-flex; align-items:center; gap:8px; padding:15px 28px; font-size:14px; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.03em; border-radius:100px; transition:all 0.25s cubic-bezier(.2,.7,.2,1); border:2px solid transparent; cursor:pointer;
   }
-  .btn-primary{background:var(--enamel); color:var(--paper);}
-  .btn-primary:hover{background:var(--enamel-light); transform:translateY(-1px);}
-  .btn-ghost{border-color:var(--ink); color:var(--ink);}
-  .btn-ghost:hover{background:var(--ink); color:var(--paper);}
+  .btn-primary{background:var(--enamel); color:#fff;}
+  .btn-primary:hover{background:var(--enamel-bright); transform:translateY(-2px); box-shadow:0 14px 30px -14px color-mix(in srgb, var(--enamel) 60%, transparent);}
+  .btn-ghost{border-color:var(--ink); color:var(--ink); background:transparent;}
+  .btn-ghost:hover{background:var(--ink); color:var(--bg); transform:translateY(-2px);}
 
-  /* ticket rail signature */
   .rail-panel{
-    background:var(--ink); border-radius:4px; padding:22px 0;
-    box-shadow:0 24px 48px -20px rgba(30,33,29,0.5);
-    position:relative; overflow:hidden;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:22px 0;
+    box-shadow:var(--shadow); position:relative; overflow:hidden; transition:background 0.4s ease, border-color 0.4s ease;
   }
-  .rail-header{
-    display:flex; justify-content:space-between; align-items:center;
-    padding:0 22px 16px; border-bottom:1px solid rgba(251,249,243,0.12);
-    margin-bottom:14px;
-  }
-  .rail-header .mono{color:rgba(251,249,243,0.5); font-size:11px; text-transform:uppercase; letter-spacing:0.08em;}
-  .rail-header .live-tag{
-    display:flex; align-items:center; gap:6px; font-size:11px; color:var(--brass-bright); font-weight:600;
-  }
+  .rail-header{display:flex; justify-content:space-between; align-items:center; padding:0 22px 16px; border-bottom:1px solid var(--line); margin-bottom:14px;}
+  .rail-header .mono{color:var(--ink-soft); font-size:11px; text-transform:uppercase; letter-spacing:0.08em;}
+  .rail-header .live-tag{display:flex; align-items:center; gap:6px; font-size:11px; color:var(--brass-bright); font-weight:600;}
   .rail-header .live-tag .ping{width:6px; height:6px; border-radius:50%; background:var(--brass-bright); animation:ping 1.8s ease-in-out infinite;}
-  .rail-track{
-    display:flex; flex-direction:column; gap:10px; padding:0 14px;
+  .rail-mask{overflow:hidden; -webkit-mask-image:linear-gradient(180deg, transparent, black 8%, black 92%, transparent);}
+  .rail-track{display:flex; flex-direction:column; gap:10px; padding:0 14px; animation:railScroll 14s linear infinite;}
+  .rail-track:hover{animation-play-state:paused;}
+  @keyframes railScroll{
+    0%{transform:translateY(0);}
+    100%{transform:translateY(-50%);}
   }
   .ticket{
-    background:var(--paper); border-radius:3px; padding:14px 16px;
+    background:var(--bg-alt); border-radius:10px; padding:14px 16px;
     display:grid; grid-template-columns:auto 1fr auto; gap:14px; align-items:center;
-    opacity:0; transform:translateX(24px);
-    animation:ticketIn 0.6s ease forwards;
   }
-  .ticket:nth-child(1){animation-delay:0.15s;}
-  .ticket:nth-child(2){animation-delay:0.35s;}
-  .ticket:nth-child(3){animation-delay:0.55s;}
-  .ticket:nth-child(4){animation-delay:0.75s;}
-  @keyframes ticketIn{to{opacity:1; transform:translateX(0);}}
   .ticket .num{font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-soft); font-weight:600;}
   .ticket .info{min-width:0;}
   .ticket .info .name{font-weight:700; font-size:14px; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .ticket .info .job{font-size:12px; color:var(--ink-soft);}
-  .stage{
-    font-family:'IBM Plex Mono', monospace; font-size:10px; font-weight:600; text-transform:uppercase;
-    letter-spacing:0.05em; padding:5px 9px; border-radius:20px; white-space:nowrap;
-  }
-  .stage.build{background:rgba(184,134,11,0.14); color:var(--brass);}
-  .stage.test{background:rgba(43,75,65,0.14); color:var(--enamel);}
-  .stage.live{background:rgba(43,75,65,0.9); color:var(--paper);}
+  .stage{font-family:'IBM Plex Mono', monospace; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; padding:5px 10px; border-radius:100px; white-space:nowrap;}
+  .stage.build{background:color-mix(in srgb, var(--brass) 16%, transparent); color:var(--brass-bright);}
+  .stage.test{background:color-mix(in srgb, var(--enamel) 16%, transparent); color:var(--enamel-bright);}
+  .stage.live{background:var(--enamel); color:#fff;}
 
-  /* ===== TRUST STRIP ===== */
-  .trust{border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:26px 0; background:var(--porcelain-dim);}
+  .trust{border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:28px 0; background:var(--bg-alt); transition:background 0.4s ease, border-color 0.4s ease;}
   .trust .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:20px;}
-  .trust-item{font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--ink-soft); letter-spacing:0.03em;}
-  .trust-item strong{color:var(--ink); font-family:'Anton', sans-serif; font-size:22px; display:block; letter-spacing:0.01em; margin-bottom:2px;}
+  .trust-item{font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--ink-soft); letter-spacing:0.02em;}
+  .trust-item strong{color:var(--ink); font-family:'Anton', sans-serif; font-size:22px; display:block; letter-spacing:0.01em; margin-bottom:3px;}
 
-  /* ===== SECTION HEADS ===== */
   .section{padding:110px 0;}
   .section-tight{padding-top:80px;}
   .sec-head{max-width:640px; margin-bottom:56px;}
-  .sec-eyebrow{font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--brass); font-weight:700; margin-bottom:14px; display:block;}
+  .sec-eyebrow{font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--brass-bright); font-weight:700; margin-bottom:14px; display:block;}
   .sec-head h2{font-size:clamp(32px, 4vw, 48px); margin-bottom:16px;}
   .sec-head p{font-size:17px; color:var(--ink-soft); line-height:1.6;}
 
-  /* ===== SERVICES — menu board ===== */
-  .menu-board{
-    border:1px solid var(--line); border-radius:4px; overflow:hidden;
-    background:var(--paper);
+  .menu-board{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  @media (max-width:900px){.menu-board{grid-template-columns:1fr 1fr;}}
+  @media (max-width:640px){.menu-board{grid-template-columns:1fr;}}
+  .menu-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:28px;
+    transition:transform 0.3s cubic-bezier(.2,.7,.2,1), box-shadow 0.3s ease, border-color 0.3s ease;
   }
-  .menu-row{
-    display:grid; grid-template-columns:64px 1fr auto; gap:20px; align-items:center;
-    padding:28px 30px; border-bottom:1px solid var(--line);
-    transition:background 0.2s ease;
-  }
-  .menu-row:last-child{border-bottom:none;}
-  .menu-row:hover{background:var(--porcelain-dim);}
-  .menu-num{font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--brass); font-weight:600;}
-  .menu-name{font-family:'Anton', sans-serif; font-size:22px; text-transform:uppercase; margin-bottom:6px; letter-spacing:0.01em;}
-  .menu-desc{color:var(--ink-soft); font-size:15px; line-height:1.5; max-width:60ch;}
-  .menu-tag{
-    font-family:'IBM Plex Mono', monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.04em;
-    color:var(--enamel); border:1px solid var(--enamel); padding:6px 12px; border-radius:20px; white-space:nowrap;
-  }
-  @media (max-width:700px){
-    .menu-row{grid-template-columns:1fr; gap:8px;}
-    .menu-tag{justify-self:start;}
-  }
+  .menu-card:hover{transform:translateY(-6px); box-shadow:var(--shadow); border-color:color-mix(in srgb, var(--brass) 40%, var(--line));}
+  .menu-num{font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--brass-bright); font-weight:700; margin-bottom:16px; display:block;}
+  .menu-name{font-family:'Anton', sans-serif; font-size:19px; text-transform:uppercase; margin-bottom:10px; letter-spacing:0.01em;}
+  .menu-desc{color:var(--ink-soft); font-size:14.5px; line-height:1.55;}
 
-  /* ===== PORTFOLIO — ticket stubs ===== */
   .stub-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:24px;}
   @media (max-width:900px){.stub-grid{grid-template-columns:1fr;}}
   .stub{
-    background:var(--paper); border:1px solid var(--line); border-radius:4px;
-    padding:0; position:relative; overflow:hidden;
-    transition:transform 0.25s ease, box-shadow 0.25s ease;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+    transition:transform 0.3s cubic-bezier(.2,.7,.2,1), box-shadow 0.3s ease;
   }
-  .stub:hover{transform:translateY(-4px); box-shadow:0 20px 40px -24px rgba(30,33,29,0.35);}
-  .stub-top{padding:26px 26px 20px; border-bottom:1.5px dashed var(--line); position:relative;}
-  .stub-top::before, .stub-top::after{
-    content:''; position:absolute; bottom:-9px; width:18px; height:18px; border-radius:50%;
-    background:var(--porcelain);
-  }
-  .stub-top::before{left:-9px;}
-  .stub-top::after{right:-9px;}
+  .stub:hover{transform:translateY(-6px) scale(1.01); box-shadow:var(--shadow);}
+  .stub-top{padding:26px 26px 20px; border-bottom:1px dashed var(--line);}
   .stub-kicker{font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px;}
-  .stub-title{font-family:'Anton', sans-serif; font-size:24px; text-transform:uppercase; line-height:1.05; margin-bottom:10px;}
-  .stub-desc{font-size:14px; color:var(--ink-soft); line-height:1.5;}
+  .stub-title{font-family:'Anton', sans-serif; font-size:23px; text-transform:uppercase; line-height:1.08; margin-bottom:10px;}
+  .stub-desc{font-size:14px; color:var(--ink-soft); line-height:1.55;}
   .stub-bottom{padding:20px 26px 26px; display:flex; justify-content:space-between; align-items:center;}
-  .stub-metric{font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--enamel); font-weight:600;}
-  .stub-served{font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--brass); text-transform:uppercase; letter-spacing:0.04em; font-weight:700;}
+  .stub-metric{font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--enamel-bright); font-weight:600;}
+  .stub-served{font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--brass-bright); text-transform:uppercase; letter-spacing:0.04em; font-weight:700;}
 
-  /* ===== PROCESS strip ===== */
-  .process{background:var(--ink); color:var(--paper); padding:90px 0;}
-  .process .sec-head p{color:rgba(251,249,243,0.6);}
-  .process .sec-head h2{color:var(--paper);}
-  .process-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:rgba(251,249,243,0.12); border-radius:4px; overflow:hidden;}
+  .process{background:var(--ink); color:var(--bg); padding:100px 0; transition:background 0.4s ease, color 0.4s ease;}
+  .process .sec-head p{color:color-mix(in srgb, var(--bg) 60%, transparent);}
+  .process .sec-head h2{color:var(--bg);}
+  .process-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:color-mix(in srgb, var(--bg) 12%, transparent); border-radius:var(--radius); overflow:hidden;}
   @media (max-width:900px){.process-grid{grid-template-columns:1fr 1fr;}}
-  .process-cell{background:var(--ink); padding:32px 24px;}
+  .process-cell{background:var(--ink); padding:34px 26px; transition:background 0.3s ease;}
+  .process-cell:hover{background:color-mix(in srgb, var(--ink) 80%, var(--brass) 10%);}
   .process-cell .stage-tag{font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--brass-bright); letter-spacing:0.05em; text-transform:uppercase; margin-bottom:14px; display:block;}
-  .process-cell h3{font-size:18px; color:var(--paper); margin-bottom:10px;}
-  .process-cell p{font-size:13.5px; color:rgba(251,249,243,0.55); line-height:1.5;}
+  .process-cell h3{font-size:18px; color:var(--bg); margin-bottom:10px;}
+  .process-cell p{font-size:13.5px; color:color-mix(in srgb, var(--bg) 55%, transparent); line-height:1.55;}
 
-  /* ===== CONTACT — order form ===== */
   .order-wrap{display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:start;}
   @media (max-width:900px){.order-wrap{grid-template-columns:1fr;}}
   .order-ticket{
-    background:var(--paper); border:1px solid var(--line); border-radius:4px; padding:36px;
-    box-shadow:0 24px 48px -30px rgba(30,33,29,0.3);
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:36px;
+    box-shadow:var(--shadow); position:relative;
   }
   .order-ticket .mono-label{font-family:'IBM Plex Mono', monospace; font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-soft); display:flex; justify-content:space-between; margin-bottom:24px; padding-bottom:16px; border-bottom:1px dashed var(--line);}
   .field{margin-bottom:20px;}
   .field label{display:block; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-soft); margin-bottom:8px;}
+  .field .err{color:#D64545; font-size:12px; margin-top:6px; display:none;}
+  .field.invalid .err{display:block;}
+  .field.invalid input, .field.invalid textarea{border-color:#D64545;}
   .field input, .field select, .field textarea{
-    width:100%; padding:13px 14px; border:1.5px solid var(--line); border-radius:2px;
-    background:var(--porcelain); font-size:15px; color:var(--ink); transition:border-color 0.2s ease;
+    width:100%; padding:13px 14px; border:1.5px solid var(--line); border-radius:8px;
+    background:var(--bg); font-size:15px; color:var(--ink); transition:border-color 0.2s ease;
   }
   .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--enamel); outline:none;}
   .field textarea{resize:vertical; min-height:100px;}
   .submit-btn{
-    width:100%; background:var(--enamel); color:var(--paper); border:none; padding:16px;
-    font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; border-radius:2px;
-    cursor:pointer; transition:background 0.2s ease;
+    width:100%; background:var(--enamel); color:#fff; border:none; padding:16px;
+    font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; border-radius:100px;
+    cursor:pointer; transition:background 0.25s ease, transform 0.2s ease;
   }
-  .submit-btn:hover{background:var(--enamel-light);}
+  .submit-btn:hover{background:var(--enamel-bright); transform:translateY(-2px);}
+  .submit-btn:disabled{opacity:0.6; cursor:not-allowed; transform:none;}
+  .form-success{
+    display:none; align-items:center; gap:10px; background:color-mix(in srgb, var(--enamel) 14%, transparent);
+    color:var(--enamel-bright); font-size:13.5px; font-weight:600; padding:12px 16px; border-radius:8px; margin-bottom:18px;
+  }
+  .form-success.show{display:flex;}
   .contact-side h2{font-size:clamp(30px,4vw,42px); margin-bottom:20px;}
   .contact-side p{color:var(--ink-soft); font-size:16px; line-height:1.6; margin-bottom:28px; max-width:44ch;}
   .contact-detail{display:flex; align-items:baseline; gap:12px; margin-bottom:14px; font-size:15px;}
-  .contact-detail .k{font-family:'IBM Plex Mono', monospace; font-size:11px; text-transform:uppercase; color:var(--brass); font-weight:700; width:90px; flex-shrink:0;}
+  .contact-detail .k{font-family:'IBM Plex Mono', monospace; font-size:11px; text-transform:uppercase; color:var(--brass-bright); font-weight:700; width:90px; flex-shrink:0;}
+  .contact-detail a:hover{color:var(--enamel-bright);}
 
-  /* ===== FOOTER ===== */
-  footer{border-top:1px solid var(--line); padding:44px 0; background:var(--porcelain-dim);}
+  footer{border-top:1px solid var(--line); padding:44px 0; background:var(--bg-alt); transition:background 0.4s ease, border-color 0.4s ease;}
   footer .wrap{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;}
   footer .mono{font-size:12px; color:var(--ink-soft);}
+  footer .foot-links{display:flex; gap:22px;}
+  footer .foot-links a{font-size:13px; color:var(--ink-soft); transition:color 0.2s ease;}
+  footer .foot-links a:hover{color:var(--brass-bright);}
+
+  .to-top{
+    position:fixed; bottom:26px; right:26px; width:46px; height:46px; border-radius:50%;
+    background:var(--ink); color:var(--bg); display:flex; align-items:center; justify-content:center;
+    border:none; cursor:pointer; opacity:0; pointer-events:none; transform:translateY(10px);
+    transition:opacity 0.3s ease, transform 0.3s ease; z-index:90; box-shadow:var(--shadow);
+  }
+  .to-top.show{opacity:1; pointer-events:auto; transform:translateY(0);}
+  .to-top:hover{transform:translateY(-3px);}
 </style>
 </head>
 <body>
@@ -284,13 +288,20 @@
       <a href="#process">Process</a>
       <a href="#contact">Contact</a>
     </nav>
-    <a href="#contact" class="nav-cta">Start a project</a>
+    <div class="nav-right">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">
+        <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+      <a href="#contact" class="nav-cta">Start a project</a>
+    </div>
   </div>
 </header>
 
 <section class="hero">
+  <div class="hero-bg-glow"></div>
   <div class="wrap">
-    <div>
+    <div class="reveal">
       <span class="eyebrow"><span class="ping"></span>Now taking on new builds</span>
       <h1 class="hero-title">Software, built<br>and kept <span class="accent">running.</span></h1>
       <p class="hero-sub">Kinfosoft designs, builds, and maintains software for small and growing businesses — with a focus on restaurants and the operators who run them. One team, from first line of code to the 2am bug fix.</p>
@@ -299,31 +310,21 @@
         <a href="#work" class="btn-ghost">See the work</a>
       </div>
     </div>
-    <div class="rail-panel">
+    <div class="rail-panel reveal" style="transition-delay:0.15s;">
       <div class="rail-header">
         <span class="mono">Active builds — Kinfosoft rail</span>
         <span class="live-tag"><span class="ping"></span>LIVE</span>
       </div>
-      <div class="rail-track">
-        <div class="ticket">
-          <span class="num">#118</span>
-          <span class="info"><span class="name">Riverside Bistro</span><span class="job">Online ordering + kitchen display</span></span>
-          <span class="stage build">Build</span>
-        </div>
-        <div class="ticket">
-          <span class="num">#117</span>
-          <span class="info"><span class="name">Corner Deli</span><span class="job">POS integration</span></span>
-          <span class="stage test">Testing</span>
-        </div>
-        <div class="ticket">
-          <span class="num">#116</span>
-          <span class="info"><span class="name">Maple & Co. Salon</span><span class="job">Booking + client portal</span></span>
-          <span class="stage test">Testing</span>
-        </div>
-        <div class="ticket">
-          <span class="num">#114</span>
-          <span class="info"><span class="name">Harvest Table Group</span><span class="job">Multi-location reporting</span></span>
-          <span class="stage live">Live</span>
+      <div class="rail-mask">
+        <div class="rail-track" id="railTrack">
+          <div class="ticket"><span class="num">#118</span><span class="info"><span class="name">Riverside Bistro</span><span class="job">Online ordering + kitchen display</span></span><span class="stage build">Build</span></div>
+          <div class="ticket"><span class="num">#117</span><span class="info"><span class="name">Corner Deli</span><span class="job">POS integration</span></span><span class="stage test">Testing</span></div>
+          <div class="ticket"><span class="num">#116</span><span class="info"><span class="name">Maple &amp; Co. Salon</span><span class="job">Booking + client portal</span></span><span class="stage test">Testing</span></div>
+          <div class="ticket"><span class="num">#114</span><span class="info"><span class="name">Harvest Table Group</span><span class="job">Multi-location reporting</span></span><span class="stage live">Live</span></div>
+          <div class="ticket" aria-hidden="true"><span class="num">#118</span><span class="info"><span class="name">Riverside Bistro</span><span class="job">Online ordering + kitchen display</span></span><span class="stage build">Build</span></div>
+          <div class="ticket" aria-hidden="true"><span class="num">#117</span><span class="info"><span class="name">Corner Deli</span><span class="job">POS integration</span></span><span class="stage test">Testing</span></div>
+          <div class="ticket" aria-hidden="true"><span class="num">#116</span><span class="info"><span class="name">Maple &amp; Co. Salon</span><span class="job">Booking + client portal</span></span><span class="stage test">Testing</span></div>
+          <div class="ticket" aria-hidden="true"><span class="num">#114</span><span class="info"><span class="name">Harvest Table Group</span><span class="job">Multi-location reporting</span></span><span class="stage live">Live</span></div>
         </div>
       </div>
     </div>
@@ -331,74 +332,47 @@
 </section>
 
 <div class="trust">
-  <div class="wrap">
+  <div class="wrap reveal-stagger">
     <div class="trust-item"><strong>Full lifecycle</strong>Architecture to deployment, in-house</div>
     <div class="trust-item"><strong>Ongoing maintenance</strong>Not a one-and-done build shop</div>
-    <div class="trust-item"><strong>Small-business fluent</strong>We know restaurant & retail ops</div>
+    <div class="trust-item"><strong>Small-business fluent</strong>We know restaurant &amp; retail ops</div>
     <div class="trust-item"><strong>Direct access</strong>You talk to the people writing the code</div>
   </div>
 </div>
 
 <section class="section" id="services">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="sec-eyebrow">What we build</span>
       <h2>Pick what your business needs</h2>
       <p>Every engagement is scoped to the business, not a package. Here's what we're asked for most.</p>
     </div>
-    <div class="menu-board">
-      <div class="menu-row">
-        <span class="menu-num">01</span>
-        <div><div class="menu-name">Custom software builds</div><div class="menu-desc">Web apps, internal tools, and customer-facing products designed around how your business actually operates.</div></div>
-        <span class="menu-tag">From scratch</span>
-      </div>
-      <div class="menu-row">
-        <span class="menu-num">02</span>
-        <div><div class="menu-name">Ongoing maintenance & support</div><div class="menu-desc">Bug fixes, updates, monitoring, and a team that already knows your codebase when something breaks.</div></div>
-        <span class="menu-tag">Retainer</span>
-      </div>
-      <div class="menu-row">
-        <span class="menu-num">03</span>
-        <div><div class="menu-name">POS & ordering integrations</div><div class="menu-desc">Connect online ordering, kitchen displays, and point-of-sale systems so orders flow without double entry.</div></div>
-        <span class="menu-tag">Integration</span>
-      </div>
-      <div class="menu-row">
-        <span class="menu-num">04</span>
-        <div><div class="menu-name">Scheduling & operations tools</div><div class="menu-desc">Staff scheduling, shift matching, and day-to-day operations software built for how your team actually works.</div></div>
-        <span class="menu-tag">Operations</span>
-      </div>
-      <div class="menu-row">
-        <span class="menu-num">05</span>
-        <div><div class="menu-name">Websites & online ordering</div><div class="menu-desc">Fast, clean sites and ordering flows that convert visitors into customers, on any device.</div></div>
-        <span class="menu-tag">Web</span>
-      </div>
-      <div class="menu-row">
-        <span class="menu-num">06</span>
-        <div><div class="menu-name">Data & reporting dashboards</div><div class="menu-desc">See sales, labor, and performance across one location or twenty, in plain numbers you can act on.</div></div>
-        <span class="menu-tag">Reporting</span>
-      </div>
+    <div class="menu-board reveal-stagger">
+      <div class="menu-card"><span class="menu-num">01</span><div class="menu-name">Custom software builds</div><div class="menu-desc">Web apps, internal tools, and customer-facing products designed around how your business actually operates.</div></div>
+      <div class="menu-card"><span class="menu-num">02</span><div class="menu-name">Ongoing maintenance &amp; support</div><div class="menu-desc">Bug fixes, updates, monitoring, and a team that already knows your codebase when something breaks.</div></div>
+      <div class="menu-card"><span class="menu-num">03</span><div class="menu-name">POS &amp; ordering integrations</div><div class="menu-desc">Connect online ordering, kitchen displays, and point-of-sale systems so orders flow without double entry.</div></div>
+      <div class="menu-card"><span class="menu-num">04</span><div class="menu-name">Scheduling &amp; operations tools</div><div class="menu-desc">Staff scheduling, shift matching, and day-to-day operations software built for how your team actually works.</div></div>
+      <div class="menu-card"><span class="menu-num">05</span><div class="menu-name">Websites &amp; online ordering</div><div class="menu-desc">Fast, clean sites and ordering flows that convert visitors into customers, on any device.</div></div>
+      <div class="menu-card"><span class="menu-num">06</span><div class="menu-name">Data &amp; reporting dashboards</div><div class="menu-desc">See sales, labor, and performance across one location or twenty, in plain numbers you can act on.</div></div>
     </div>
   </div>
 </section>
 
 <section class="section section-tight" id="work">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="sec-eyebrow">Recent work</span>
       <h2>Tickets we've served</h2>
       <p>A few of the builds moving through the Kinfosoft rail — from first spec to running in production.</p>
     </div>
-    <div class="stub-grid">
+    <div class="stub-grid reveal-stagger">
       <div class="stub">
         <div class="stub-top">
           <div class="stub-kicker">Home care / staff scheduling</div>
           <div class="stub-title">Smart shift matching platform</div>
           <div class="stub-desc">Dynamic scoring engine that auto-matches care professionals to open shifts by availability, skill, and fit — built for agencies running hundreds of shifts a week.</div>
         </div>
-        <div class="stub-bottom">
-          <span class="stub-metric">500+ staff supported</span>
-          <span class="stub-served">Served ✓</span>
-        </div>
+        <div class="stub-bottom"><span class="stub-metric">500+ staff supported</span><span class="stub-served">Served ✓</span></div>
       </div>
       <div class="stub">
         <div class="stub-top">
@@ -406,10 +380,7 @@
           <div class="stub-title">Online ordering + kitchen display</div>
           <div class="stub-desc">Replaced a paper ticket rail with a synced digital ordering and kitchen display system, cutting order errors and ticket times.</div>
         </div>
-        <div class="stub-bottom">
-          <span class="stub-metric">In build</span>
-          <span class="stub-served">On the rail</span>
-        </div>
+        <div class="stub-bottom"><span class="stub-metric">In build</span><span class="stub-served">On the rail</span></div>
       </div>
       <div class="stub">
         <div class="stub-top">
@@ -417,10 +388,7 @@
           <div class="stub-title">Multi-location sales dashboard</div>
           <div class="stub-desc">One live dashboard pulling sales and labor data across locations, replacing a stack of end-of-day spreadsheets.</div>
         </div>
-        <div class="stub-bottom">
-          <span class="stub-metric">Daily active use</span>
-          <span class="stub-served">Served ✓</span>
-        </div>
+        <div class="stub-bottom"><span class="stub-metric">Daily active use</span><span class="stub-served">Served ✓</span></div>
       </div>
     </div>
   </div>
@@ -428,32 +396,16 @@
 
 <section class="process" id="process">
   <div class="wrap">
-    <div class="sec-head">
+    <div class="sec-head reveal">
       <span class="sec-eyebrow">How it runs</span>
       <h2>From order to service</h2>
       <p>The same four stages, whether it's a small fix or a full build.</p>
     </div>
-    <div class="process-grid">
-      <div class="process-cell">
-        <span class="stage-tag">Stage 01</span>
-        <h3>Order taken</h3>
-        <p>We scope the problem with you — what it needs to do, who uses it, and what "done" looks like.</p>
-      </div>
-      <div class="process-cell">
-        <span class="stage-tag">Stage 02</span>
-        <h3>Build</h3>
-        <p>We design and write the software, with regular check-ins so nothing surprises you at the end.</p>
-      </div>
-      <div class="process-cell">
-        <span class="stage-tag">Stage 03</span>
-        <h3>Testing</h3>
-        <p>We test against real workflows, not just clean data, before anything reaches your team or customers.</p>
-      </div>
-      <div class="process-cell">
-        <span class="stage-tag">Stage 04</span>
-        <h3>Served & maintained</h3>
-        <p>It goes live, and we stay on — monitoring, fixing, and improving as your business changes.</p>
-      </div>
+    <div class="process-grid reveal-stagger">
+      <div class="process-cell"><span class="stage-tag">Stage 01</span><h3>Order taken</h3><p>We scope the problem with you — what it needs to do, who uses it, and what "done" looks like.</p></div>
+      <div class="process-cell"><span class="stage-tag">Stage 02</span><h3>Build</h3><p>We design and write the software, with regular check-ins so nothing surprises you at the end.</p></div>
+      <div class="process-cell"><span class="stage-tag">Stage 03</span><h3>Testing</h3><p>We test against real workflows, not just clean data, before anything reaches your team or customers.</p></div>
+      <div class="process-cell"><span class="stage-tag">Stage 04</span><h3>Served &amp; maintained</h3><p>It goes live, and we stay on — monitoring, fixing, and improving as your business changes.</p></div>
     </div>
   </div>
 </section>
@@ -461,23 +413,26 @@
 <section class="section" id="contact">
   <div class="wrap">
     <div class="order-wrap">
-      <div class="contact-side">
+      <div class="contact-side reveal">
         <span class="sec-eyebrow">Get in touch</span>
         <h2>Tell us what you're running into</h2>
         <p>Whether it's a new build or a system that needs looking after, tell us about your business and we'll get back to you within one business day.</p>
-        <div class="contact-detail"><span class="k">Email</span> hello@kinfosoft.com</div>
+        <div class="contact-detail"><span class="k">Email</span> <a href="mailto:hello@kinfosoft.com">hello@kinfosoft.com</a></div>
         <div class="contact-detail"><span class="k">Response</span> Within 1 business day</div>
         <div class="contact-detail"><span class="k">Based in</span> Ontario, Canada</div>
       </div>
-      <form class="order-ticket" onsubmit="return false;">
+      <form class="order-ticket reveal" style="transition-delay:0.1s;" id="contactForm" novalidate>
         <div class="mono-label"><span>Order #NEW</span><span>Kinfosoft</span></div>
-        <div class="field">
+        <div class="form-success" id="formSuccess">✓ Your email app should now be open with this pre-filled — hit send there to reach us.</div>
+        <div class="field" id="fieldName">
           <label for="name">Your name</label>
           <input type="text" id="name" placeholder="Jordan Lee" required>
+          <span class="err">Please enter your name.</span>
         </div>
-        <div class="field">
+        <div class="field" id="fieldEmail">
           <label for="email">Email</label>
           <input type="email" id="email" placeholder="jordan@yourbusiness.com" required>
+          <span class="err">Please enter a valid email.</span>
         </div>
         <div class="field">
           <label for="biztype">Business type</label>
@@ -488,11 +443,12 @@
             <option>Other small business</option>
           </select>
         </div>
-        <div class="field">
+        <div class="field" id="fieldMessage">
           <label for="message">What do you need?</label>
-          <textarea id="message" placeholder="Tell us what you're building or what's not working right now."></textarea>
+          <textarea id="message" placeholder="Tell us what you're building or what's not working right now." required></textarea>
+          <span class="err">Let us know a bit about what you need.</span>
         </div>
-        <button type="submit" class="submit-btn">Send order</button>
+        <button type="submit" class="submit-btn" id="submitBtn">Send order</button>
       </form>
     </div>
   </div>
@@ -501,9 +457,104 @@
 <footer>
   <div class="wrap">
     <div class="logo"><span class="dot"></span>KINFOSOFT</div>
+    <div class="foot-links">
+      <a href="#services">Services</a>
+      <a href="#work">Work</a>
+      <a href="#contact">Contact</a>
+    </div>
     <span class="mono">© 2026 Kinfosoft. Built and maintained in-house.</span>
   </div>
 </footer>
+
+<button class="to-top" id="toTop" aria-label="Back to top">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+  (function(){
+    const root = document.documentElement;
+    const stored = localStorage.getItem('kinfosoft-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initial = stored || (prefersDark ? 'dark' : 'light');
+    root.setAttribute('data-theme', initial);
+    updateIcon(initial);
+
+    const btn = document.getElementById('themeToggle');
+    btn.addEventListener('click', () => {
+      const current = root.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('kinfosoft-theme', next);
+      updateIcon(next);
+    });
+
+    function updateIcon(theme){
+      document.getElementById('iconSun').style.display = theme === 'dark' ? 'block' : 'none';
+      document.getElementById('iconMoon').style.display = theme === 'dark' ? 'none' : 'block';
+    }
+  })();
+
+  (function(){
+    const items = document.querySelectorAll('.reveal, .reveal-stagger');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if(e.isIntersecting){
+          e.target.classList.add('in-view');
+          io.unobserve(e.target);
+        }
+      });
+    }, {threshold: 0.15});
+    items.forEach(i => io.observe(i));
+  })();
+
+  (function(){
+    const btn = document.getElementById('toTop');
+    window.addEventListener('scroll', () => {
+      btn.classList.toggle('show', window.scrollY > 500);
+    });
+    btn.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+  })();
+
+  (function(){
+    const form = document.getElementById('contactForm');
+    const success = document.getElementById('formSuccess');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      const name = document.getElementById('name');
+      const email = document.getElementById('email');
+      const bizType = document.getElementById('biztype').value;
+      const message = document.getElementById('message');
+
+      let valid = true;
+      toggleError('fieldName', name.value.trim().length > 0);
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+      toggleError('fieldEmail', emailOk);
+      toggleError('fieldMessage', message.value.trim().length > 0);
+      valid = name.value.trim().length > 0 && emailOk && message.value.trim().length > 0;
+
+      if(!valid) return;
+
+      const subject = encodeURIComponent('New project inquiry — ' + name.value.trim());
+      const body = encodeURIComponent(
+        'Name: ' + name.value.trim() + '\n' +
+        'Email: ' + email.value.trim() + '\n' +
+        'Business type: ' + bizType + '\n\n' +
+        message.value.trim()
+      );
+      window.location.href = 'mailto:hello@kinfosoft.com?subject=' + subject + '&body=' + body;
+
+      success.classList.add('show');
+      submitBtn.textContent = 'Order sent →';
+      setTimeout(() => { submitBtn.textContent = 'Send order'; }, 2500);
+
+      function toggleError(id, ok){
+        document.getElementById(id).classList.toggle('invalid', !ok);
+      }
+    });
+  })();
+</script>
 
 </body>
 </html>
