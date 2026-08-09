@@ -34,7 +34,8 @@ module.exports = async function handler(req, res) {
     await resend.emails.send({
       // [BACKEND] Switch sender to verified kinfosoft.com domain - Aug 2026
       from: 'Kinfosoft <noreply@kinfosoft.com>',
-      to: 'hello@kinfosoft.com',
+      // [BACKEND] Fix delivery address - was pointing to non-existent hello@kinfosoft.com inbox - Aug 2026
+      to: 'infinixcare.ca@gmail.com',
       reply_to: email.trim(),
       subject: `New project inquiry — ${name.trim()}`,
       text,
