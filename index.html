@@ -523,37 +523,65 @@
     const success = document.getElementById('formSuccess');
     const submitBtn = document.getElementById('submitBtn');
 
-    form.addEventListener('submit', function(e){
+    let submitError = document.getElementById('submitError');
+    if (!submitError) {
+      submitError = document.createElement('p');
+      submitError.id = 'submitError';
+      submitError.style.cssText = 'display:none; color:#D64545; font-size:13px; margin-top:10px; text-align:center;';
+      submitBtn.insertAdjacentElement('afterend', submitError);
+    }
+
+    function toggleError(id, ok){
+      document.getElementById(id).classList.toggle('invalid', !ok);
+    }
+
+    form.addEventListener('submit', async function(e){
       e.preventDefault();
       const name = document.getElementById('name');
       const email = document.getElementById('email');
       const bizType = document.getElementById('biztype').value;
       const message = document.getElementById('message');
 
-      let valid = true;
       toggleError('fieldName', name.value.trim().length > 0);
       const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
       toggleError('fieldEmail', emailOk);
       toggleError('fieldMessage', message.value.trim().length > 0);
-      valid = name.value.trim().length > 0 && emailOk && message.value.trim().length > 0;
+      if (!name.value.trim() || !emailOk || !message.value.trim()) return;
 
-      if(!valid) return;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+      submitError.style.display = 'none';
+      success.classList.remove('show');
 
-      const subject = encodeURIComponent('New project inquiry — ' + name.value.trim());
-      const body = encodeURIComponent(
-        'Name: ' + name.value.trim() + '\n' +
-        'Email: ' + email.value.trim() + '\n' +
-        'Business type: ' + bizType + '\n\n' +
-        message.value.trim()
-      );
-      window.location.href = 'mailto:hello@kinfosoft.com?subject=' + subject + '&body=' + body;
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name.value.trim(),
+            email: email.value.trim(),
+            businessType: bizType,
+            message: message.value.trim(),
+          }),
+        });
 
-      success.classList.add('show');
-      submitBtn.textContent = 'Order sent →';
-      setTimeout(() => { submitBtn.textContent = 'Send order'; }, 2500);
-
-      function toggleError(id, ok){
-        document.getElementById(id).classList.toggle('invalid', !ok);
+        if (res.ok) {
+          success.textContent = '✓ Message sent — we\'ll get back to you within one business day.';
+          success.classList.add('show');
+          form.reset();
+          submitBtn.textContent = 'Send order';
+        } else {
+          const data = await res.json().catch(() => ({}));
+          submitError.textContent = data.error || 'Something went wrong. Please try again.';
+          submitError.style.display = 'block';
+          submitBtn.textContent = 'Send order';
+        }
+      } catch (_) {
+        submitError.textContent = 'Network error — please check your connection and try again.';
+        submitError.style.display = 'block';
+        submitBtn.textContent = 'Send order';
+      } finally {
+        submitBtn.disabled = false;
       }
     });
   })();
